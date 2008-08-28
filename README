@@ -1,0 +1,19 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2361
+
+Simple script that helps navigation in unified diffs (patches).
+
+Together with external utility filterdiff (part of patchutils) it provides DiffAnnotate command that tags all hunks with their number and name of the changed file.
+
+DiffShowHunk command displays annotation of the current hunk (useful when inside a big hunk).
+
+DiffNextFile and DiffPrevFile command can be used to quickly skip to next/previous changed file.
+
+DiffNextHunk and DiffPrevHunk quickly skips to next/previous hunk.
+
+Since the default (,),{ and } mappings are not much useful in diffs, the plugin remaps these in the following way:
+}  => DiffNextFile
+{  => DiffPrevFile
+)  => DiffNextHunk
+(  => DiffPrevHunk
+
+
