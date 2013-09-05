@@ -1,0 +1,5 @@
+Splitdiff is a bad idea ... splits just on the level of files, not
+hunks.
+
+For more information about the format, see
+https://en.wikipedia.org/wiki/Diff#Unified_format

@@ -1,0 +1,4 @@
+Something similar to what Emacs EDiff does.
+Also it should be possible to use splitdiff?
+(Although it is rather brutal ... we want one diff,
+not messy temp files all around)
