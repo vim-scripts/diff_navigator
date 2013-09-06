@@ -33,14 +33,14 @@
 
 
 
-    "summary": "Split patch", 
+    "summary": "When deleting hunk only the following hunk header is fixed", 
 
 
 
 
 
 
-    "time": "Thu, 05 Sep 2013 13:05:53 +0000"
+    "time": "Mon, 09 Sep 2013 20:52:24 +0000"
 
 
 

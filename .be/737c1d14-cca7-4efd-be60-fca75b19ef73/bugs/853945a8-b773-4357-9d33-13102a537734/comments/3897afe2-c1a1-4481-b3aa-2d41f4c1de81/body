@@ -1,0 +1,10 @@
+So, for example from the original hunk header
+
+@@ -20,8 +20,17 @@ Hunk #1, a/tests/test_ec_curves.py
+
+we get just
+
+@@ -20,5 +20,5 @@ Hunk #1
+
+(changed numbers are correct)
+

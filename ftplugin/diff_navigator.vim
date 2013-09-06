@@ -61,7 +61,7 @@ endfunction
 "     the last number is the number of lines after the hunk has been applied.
 function s:parseHunkHeader(lineno)
     let inline = getline(a:lineno)
-    " Thanks for somian from #vim IRC channel for this incredible RE
+    " Thanks to somian from #vim IRC channel for this incredible RE
     let hunk_nos = substitute(inline,
          \ '\_^\S\S\s\+-\(\d\+\),\(\d\+\)\s\++\(\d\+\),\(\d\+\)\s\+\S\S\(\_.*\)',
          \ "\\1,\\2,\\3,\\4,\\5","")
@@ -73,7 +73,7 @@ function s:parseHunkHeader(lineno)
         \ 'oldCount': result[1],
         \ 'newFirst': result[2],
         \ 'newCount': result[3],
-        \ 'remainderLine': result[4]
+        \ 'remainderLine': join(result[4:], ",")
         \ }
 endfunction
 
@@ -105,11 +105,11 @@ function s:countLines(start, end)
     for line in getline(a:start, a:end)
         let first_char = strpart(line, 0, 1)
         if first_char == ' '
-            context_lines += 1
+            let context_lines = context_lines + 1
         elseif first_char == '-'
-            old_lines += 1
+            let old_lines = old_lines + 1
         elseif first_char == '+'
-            new_lines += 1
+            let new_lines = new_lines + 1
         else
         endif
     endfor
@@ -165,7 +165,7 @@ function s:DiffSplitHunk()
     " With this hunk:
     "
     " @@ -20,8 +20,17 @@ Hunk #1, a/tests/test_ec_curves.py
-    "  
+    "
     "  import unittest
     "  #import sha
     " -from M2Crypto import EC, Rand
@@ -210,9 +210,9 @@ function s:DiffSplitHunk()
         \ old_cur_header['remainderLine'])
     let window_state = winsaveview()
     " write the new original header line
-    setpos(".", old_cur_header['line'])
+    call setpos(".", [0, old_cur_header['line'], 1, 0])
     normal ^d$"xp
-    winrestview(window_state)
+    call winrestview(window_state)
 
     " IN THE NEW HUNK HEADER
     " new lengths = original len - new len
@@ -224,22 +224,84 @@ function s:DiffSplitHunk()
     let @x = s:createHunkHeader(new_pos_del_start, new_pos_del_len,
         \ new_pos_add_start, new_pos_add_len, "")
     execute "normal! O\<Esc>\"xP"
+endfunction
 
+" Delete the hunk cursor is in.
+function s:DiffDeleteHunk()
+    let last_hunk_in_file = 0
+
+    let start_hunk_line = search('^@@[ +-\,\d]*@@.*$', 'bncW')
+    " we are before the first hunk ... return
+    if start_hunk_line == 0
+        return
+    endif
+
+    " end of the hunk is start of next hunk or next file, whichever
+    " comes first
+    let next_hunk_line = search('^@@[ +-\,\d]*@@.*$', 'nW')
+    let start_of_next_file_line = search('^--- .*$', 'ncW')
+    if start_of_next_file_line > 0 &&
+            \ start_of_next_file_line < next_hunk_line
+        let next_hunk_line = start_of_next_file_line
+        let last_hunk_in_file = 1
+    endif
+
+    " if this is the last hunk in the file ... just erase everything
+    " from the start of the hunk (inclusive) to the end
+    if next_hunk_line == 0
+        execute start_hunk_line . ",$" . "d"
+    " we are in the middle of the file ... it's a bit more complicated
+    else
+        let count_lines = s:countLines(start_hunk_line + 1,
+            \ next_hunk_line - 1)
+        let added_lines = count_lines[1] - count_lines[0]
+        call setpos(".", [0, next_hunk_line, 1, 0])
+        execute start_hunk_line . "," . (next_hunk_line - 1) . "d"
+
+        " record the line number of the new hunk header after delete
+        let new_header_line = line(".")
+
+        " recalculate current hunk header
+        while ! last_hunk_in_file
+            let cur_header = s:parseHunkHeader(line("."))
+            let old_line = cur_header['newFirst']
+            let new_line = old_line - added_lines
+            let @x = substitute(getline("."), "+" . old_line . ",",
+                \ "+" . new_line . ",", "")
+            normal ^d$"xp
+
+            " check the next hunk
+            let next_hunk_line = search('\_^@@[ +-\,\d]*@@\_.*\_$', 'nW')
+            let start_of_next_file_line = search('^--- .*$', 'ncW')
+            if start_of_next_file_line < next_hunk_line
+                let next_hunk_line = start_of_next_file_line
+                let last_hunk_in_file = 1
+            endif
+            call setpos(".", [0, next_hunk_line, 1, 0])
+        endwhile
+
+        " jump to the line after the deleted hunk
+        call setpos(".", [0, new_header_line, 1, 0])
+    endif
 endfunction
 
 " Define new commands
-command DiffAnnotate call s:DiffAnnotate()
-command DiffShowHunk call s:DiffShowHunk()
-command DiffNextHunk call s:DiffNextHunk()
-command DiffPrevHunk call s:DiffPrevHunk()
-command DiffNextFile call s:DiffNextFile()
-command DiffPrevFile call s:DiffPrevFile()
+command DiffAnnotate    call s:DiffAnnotate()
+command DiffShowHunk    call s:DiffShowHunk()
+command DiffNextHunk    call s:DiffNextHunk()
+command DiffPrevHunk    call s:DiffPrevHunk()
+command DiffNextFile    call s:DiffNextFile()
+command DiffPrevFile    call s:DiffPrevFile()
+command DiffSplitHunk   call s:DiffSplitHunk()
+command DiffDeleteHunk  call s:DiffDeleteHunk()
 
 
 " Default },{,(,) do not make much sense in diffs, so remap them to
 " make something useful
-nnoremap <script> } :call <SID>DiffNextFile()<CR>
-nnoremap <script> { :call <SID>DiffPrevFile()<CR>
-nnoremap <script> ) :call <SID>DiffNextHunk()<CR>
-nnoremap <script> ( :call <SID>DiffPrevHunk()<CR>
-nnoremap <script> ! :call <SID>DiffShowHunk()<CR>
+nnoremap <silent> <script> } :call <SID>DiffNextFile()<CR>
+nnoremap <silent> <script> { :call <SID>DiffPrevFile()<CR>
+nnoremap <silent> <script> ) :call <SID>DiffNextHunk()<CR>
+nnoremap <silent> <script> ( :call <SID>DiffPrevHunk()<CR>
+nnoremap <silent> <script> ! :call <SID>DiffShowHunk()<CR>
+nnoremap <silent> <script> S :call <SID>DiffSplitHunk()<CR>
+nnoremap <silent> <script> D :call <SID>DiffDeleteHunk()<CR>
