@@ -1,0 +1,50 @@
+{
+
+
+
+
+
+
+    "creator": "Mat\u011bj Cepl <mcepl@redhat.com>", 
+
+
+
+
+
+
+    "reporter": "Mat\u011bj Cepl <mcepl@redhat.com>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "When deleting hunk only the following hunk header is fixed", 
+
+
+
+
+
+
+    "time": "Mon, 09 Sep 2013 20:52:24 +0000"
+
+
+
+
+
+
+}

@@ -1,0 +1,110 @@
+--- a/tests/test_ec_curves.py
++++ b/tests/test_ec_curves.py
+@@ -20,8 +20,17 @@ Hunk #1, a/tests/test_ec_curves.py
+ 
+ import unittest
+ #import sha
+-from M2Crypto import EC, Rand
+-from test_ecdsa import ECDSATestCase as ECDSATest
++try:
++    from M2Crypto import EC, Rand
++    from test_ecdsa import ECDSATestCase as ECDSATest
++# AttributeError: 'module' object has no attribute 'ec_init'
++#except AttributeError:
++except:
++    EC_Module_Available = False
++    print("No EC modules available")
++else:
++    EC_Module_Available = True
++    print("EC modules are available")
+ 
+ 
+ curves = [
+@@ -108,6 +117,9 @@ Hunk #2, a/tests/test_ec_curves.py curves = [
+ #    ('ipsec4', 185),
+ #]
+ 
++
++@unittest.skipUnless(EC_Module_Available,
++                     'Requires EC modules compiled into OpenSSL')
+ class ECCurveTests(unittest.TestCase):
+     #data = sha.sha('Kilroy was here!').digest()     # 160 bits
+     data = "digest"     # keep short (48 bits) so lesser curves 
+@@ -153,7 +165,8 @@ Hunk #3, a/tests/test_ec_curves.py def suite():
+ 
+ 
+ if __name__ == '__main__':
+-    Rand.load_file('randpool.dat', -1) 
++    print("EC_Module_Available = %s" % EC_Module_Available)
++    Rand.load_file('randpool.dat', -1)
+     unittest.TextTestRunner().run(suite())
+     Rand.save_file('randpool.dat')
+ 
+--- a/tests/test_ecdh.py
++++ b/tests/test_ecdh.py
+@@ -8,9 +8,20 @@ Hunk #1, a/tests/test_ecdh.py Portions copyright (c) 2005-2006 Vrije U
+ 
+ 
+ import unittest
+-from M2Crypto import EC, BIO, Rand, m2
+ import sys
++try:
++    from M2Crypto import EC, BIO, Rand, m2
++# AttributeError: 'module' object has no attribute 'ec_init'
++except:
++    EC_Module_Available = False
++    print("No EC modules available")
++else:
++    EC_Module_Available = True
++    print("EC modules are available")
+ 
++
++@unittest.skipUnless(EC_Module_Available,
++                     'Requires EC modules compiled into OpenSSL')
+ class ECDHTestCase(unittest.TestCase):
+ 
+     privkey = 'tests/ec.priv.pem'
+@@ -43,7 +54,8 @@ Hunk #2, a/tests/test_ecdh.py def suite():
+ 
+ 
+ if __name__=='__main__':
+-    Rand.load_file('randpool.dat', -1) 
++    print("EC_Module_Available = %s" % EC_Module_Available)
++    Rand.load_file('randpool.dat', -1)
+     unittest.TextTestRunner().run(suite())
+     Rand.save_file('randpool.dat')
+ 
+--- a/tests/test_ecdsa.py
++++ b/tests/test_ecdsa.py
+@@ -8,8 +8,20 @@ Hunk #1, a/tests/test_ecdsa.py Portions copyright (c) 2005-2006 Vrije U
+ 
+ import unittest
+ import sha
+-from M2Crypto import EC, BIO, Rand, m2
++try:
++    from M2Crypto import EC, BIO, Rand, m2
++# AttributeError: 'module' object has no attribute 'ec_init'
++#except AttributeError:
++except:
++    EC_Module_Available = False
++    print("No EC modules available")
++else:
++    EC_Module_Available = True
++    print("EC modules are available")
+ 
++
++@unittest.skipUnless(EC_Module_Available,
++                     'Requires EC modules compiled into OpenSSL')
+ class ECDSATestCase(unittest.TestCase):
+ 
+     errkey = 'tests/rsa.priv.pem'
+@@ -69,7 +81,8 @@ Hunk #2, a/tests/test_ecdsa.py def suite():
+     
+ 
+ if __name__ == '__main__':
+-    Rand.load_file('randpool.dat', -1) 
++    print("EC_Module_Available = %s" % EC_Module_Available)
++    Rand.load_file('randpool.dat', -1)
+     unittest.TextTestRunner().run(suite())
+     Rand.save_file('randpool.dat')
+ 

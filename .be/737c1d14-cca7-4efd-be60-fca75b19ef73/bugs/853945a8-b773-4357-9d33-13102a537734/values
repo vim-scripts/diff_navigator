@@ -1,0 +1,50 @@
+{
+
+
+
+
+
+
+    "creator": "Mat\u011bj Cepl <mcepl@redhat.com>", 
+
+
+
+
+
+
+    "reporter": "Mat\u011bj Cepl <mcepl@redhat.com>", 
+
+
+
+
+
+
+    "severity": "minor", 
+
+
+
+
+
+
+    "status": "fixed", 
+
+
+
+
+
+
+    "summary": "When splitting hunk the descriptive section is shortened", 
+
+
+
+
+
+
+    "time": "Fri, 06 Sep 2013 12:03:26 +0000"
+
+
+
+
+
+
+}
