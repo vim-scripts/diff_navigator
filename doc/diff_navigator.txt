@@ -1,0 +1,50 @@
+*diff_navigator.txt* Plugin for editing of patches
+
+Author: Petr Uzel <petr.uzel -at- centrum.cz>
+        Matěj Cepl <http://matej.ceplovi.cz/>
+License: WTFPL
+
+INTRODUCTION *diff_navigator*
+
+Whenever you edit a patch (file with ft=diff), a set of commands is defined
+for movement inside of the file and its edits.
+
+
+                                                    *diff_navigator-commands*
+COMMANDS *diff_navigator-commands*
+
+
+                                                              *:DiffAnnotate*
+:DiffAnnotate          Filter whole patch through `filterdiff` (part of
+                       `patchutils` package), which annotates all hunks with
+                       explanatory heading (without changing semantic meaning
+                       of each hunk).
+
+
+                                                              *:DiffShowHunk*
+:DiffShowHunk          Decorate current hunk with explanatory heading
+                       header.
+
+
+                                                              *:DiffNextHunk*
+:DiffNextHunk          Jump to the next hunk.
+
+
+                                                              *:DiffPrevHunk*
+:DiffPrevHunk          Jump to the previous hunk.
+
+
+                                                             *:DiffSplitHunk*
+:DiffSplitHunk         Splits the hunk under the cursor, fixing previous
+                       hunk header to correctly reflect the situation.
+
+
+                                                            *:DiffDeleteHunk*
+:DiffDeleteHunk        Deletes the hunk under the cursor. It fixes all
+                       hunks to have correctly changed headers.
+
+
+                                                    *diff_navigator-settings*
+This plugin doesn't have any settings.
+
+ vim:tw=78:et:ft=help:norl:
