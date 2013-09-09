@@ -1,9 +1,10 @@
 " ============================================================================
 " File:         diff_navigator.vim
 " Description:  Filetype plugin to ease navigation in (unified) diffs
-" Maintainer:   Petr Uzel <petr.uzel -at- centrum.cz>
-" Version:      0.1
-" Last Change:  27 Aug, 2008
+" Maintainer:   Petr Uzel <petr.uzel -at- centrum.cz>,
+"               Matěj Cepl <mcepl -at- cepl dot eu>
+" Version:      0.2
+" Last Change:  10 Sep, 2013
 " License:      This program is free software. It comes without any warranty,
 "               to the extent permitted by applicable law. You can redistribute
 "               it and/or modify it under the terms of the Do What The Fuck You
@@ -15,9 +16,11 @@
 "
 "
 " TODO:         show current hunk in status line
-" TODO:         delete hunk/whole file diff - like http://www.vim.org/scripts/script.php?script_id=444)
+" TODO:         delete whole file diff -
+"               like http://www.vim.org/scripts/script.php?script_id=444)
 " TODO:         incorporate more patchutils functionality
-" TODO:         something like taglist for diff (shows all files/hunks in the diff)
+" TODO:         something like taglist for diff (shows all files/hunks in
+"               the diff)
 " TODO:         option for *Next|Prev* funtions to wrap around end of file
 " ============================================================================
 
@@ -303,5 +306,5 @@ nnoremap <silent> <script> { :call <SID>DiffPrevFile()<CR>
 nnoremap <silent> <script> ) :call <SID>DiffNextHunk()<CR>
 nnoremap <silent> <script> ( :call <SID>DiffPrevHunk()<CR>
 nnoremap <silent> <script> ! :call <SID>DiffShowHunk()<CR>
-nnoremap <silent> <script> S :call <SID>DiffSplitHunk()<CR>
-nnoremap <silent> <script> D :call <SID>DiffDeleteHunk()<CR>
+nnoremap <silent> <script> <leader>s :call <SID>DiffSplitHunk()<CR>
+nnoremap <silent> <script> <leader>d :call <SID>DiffDeleteHunk()<CR>
